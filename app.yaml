@@ -1,0 +1,37 @@
+ClientSettings:
+  Server:
+    # [必选] 服务端ip/域名（来自服务端配置文件的urls参数）
+    ServerAddr: test.cc
+    # [必选] 服务端监听的通信端口（来自服务端配置文件的urls参数）
+    ServerPort: 1270
+  #  [可选]，服务端Token，必须与服务端配置一致，否则拒绝登录。
+  Token: TOKEN_FOR_CLIENT_AUTHENTICATION
+  Webs:
+    # 内网站点所在内网的ip
+    - LocalIp: 0.0.0.0
+      # 内网站点监听的端口号
+      LocalPort: 8090
+      # 子域名, 访问本站点时的url为 http://${SubDomain}.${WebDomain}:${ServerPort}
+      SubDomain: test
+      # [可选] 附加域名，需要解析CNAME或A记录至当前子域名
+      WWW:
+        - www.abc.com
+        - test111.test.cc
+
+  # [ 可选 ] 端口转发 通过专用端口代理，不需要有自己的域名
+  # 可穿透所有TCP上层协议
+  # 远程linux示例：#ssh -oPort=12701 {root}@{ServerAddr} ServerAddr 填入服务端ip，root对应内网用户名
+  # 通过服务端返回的访问方式进行访问即可
+  Forwards:
+    # [必选] 内网服务所在主机ip
+    - LocalIp: 127.0.0.1
+      # [必选] 内网服务监听端口 windows远程桌面端口为3389
+      LocalPort: 3389
+      # [必选] 服务端端口 访问 服务端ip:1274 即可实现远程window桌面
+      RemotePort: 1274
+      # [可选] 通讯协议，可选值TCP,UDP,默认值TCP
+      Protocol: TCP
+    - LocalIp: 127.0.0.1
+      LocalPort: 3306
+      RemotePort: 1275
+      Protocol: TCP
