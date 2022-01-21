@@ -1,0 +1,23 @@
+token = "TOKEN_FOR_CLIENT_AUTHENTICATION"
+
+[[webs]]
+local_ip = "0.0.0.0"
+local_port = 8090
+sub_domain = "test"
+www = ["www.abc.com", "test111.test.cc"]
+
+[server]
+server_addr = "test.cc"
+server_port = 1270
+
+[[forwards]]
+local_ip = "127.0.0.1"
+local_port = 3389
+remote_port = 1274
+protocol = "TCP"
+
+[[forwards]]
+local_ip = "127.0.0.1"
+local_port = 3306
+remote_port = 1275
+protocol = "TCP"

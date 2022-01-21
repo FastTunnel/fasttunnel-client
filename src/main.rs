@@ -3,8 +3,7 @@ use std::io::Read;
 
 use clap::Parser;
 use tokio::io::AsyncReadExt;
-use tracing::{info, Level};
-
+use log::{info, trace, warn};
 use crate::conf::{CONFIG, init_config, load_config};
 
 mod conf;
@@ -14,7 +13,7 @@ mod conf;
 #[clap(author, version, about, long_about = None)]
 pub(crate) struct Args {
     /// 配置文件路径
-    #[clap(short, long, default_value = "./app.yaml")]
+    #[clap(short, long, default_value = "./app.toml")]
     pub(crate) config: String,
 
     /// 版本号
@@ -24,21 +23,13 @@ pub(crate) struct Args {
 
 #[tokio::main(worker_threads = 2)]
 async fn main() -> Result<(), anyhow::Error> {
-    tracing::subscriber::with_default(
-        tracing_subscriber::fmt()
-            .with_max_level(Level::TRACE)
-            .finish(),
-        || {
-            info!("初始化客户端");
-        });
-
-    // 加载全局配置
+    trace!("客户端初始化");
     {
         let args: Args = Args::parse();
-        let yaml = load_config(&args.config).await?;
-        init_config(yaml).await;
+        let config = load_config(&args.config).await?;
+        init_config(config).await;
     }
-    info!("全局加载服务地址{}",&CONFIG.lock().await.as_ref().unwrap().server.server_addr);
+    trace!("全局加载服务地址{}",&CONFIG.lock().await.as_ref().unwrap().server.server_addr);
     Ok(())
 }
 
