@@ -1,9 +1,7 @@
-use std::fs::File;
-use std::io::Read;
-
 use clap::Parser;
-use tokio::io::AsyncReadExt;
-use log::{info, trace, warn};
+use env_logger::Env;
+use log::trace;
+
 use crate::conf::{CONFIG, init_config, load_config};
 
 mod conf;
@@ -23,11 +21,12 @@ pub(crate) struct Args {
 
 #[tokio::main(worker_threads = 2)]
 async fn main() -> Result<(), anyhow::Error> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("trace")).init();
     trace!("客户端初始化");
     {
         let args: Args = Args::parse();
         let config = load_config(&args.config).await?;
-        init_config(config).await;
+        init_config(config).await?;
     }
     trace!("全局加载服务地址{}",&CONFIG.lock().await.as_ref().unwrap().server.server_addr);
     Ok(())

@@ -1,7 +1,7 @@
-use tokio::sync::Mutex;
 use lazy_static::lazy_static;
-use tokio::io::AsyncReadExt;
 use serde::Deserialize;
+use tokio::io::AsyncReadExt;
+use tokio::sync::Mutex;
 
 lazy_static! {
     pub static ref CONFIG: Mutex<Option<ClientSettings>> = Mutex::new(None);
@@ -41,7 +41,7 @@ pub struct ClientSettings {
 pub async fn load_config(path: &String) -> Result<ClientSettings, anyhow::Error> {
     let mut conf = String::new();
     let mut file = tokio::fs::File::open(path).await?;
-    file.read_to_string(&mut conf).await;
+    file.read_to_string(&mut conf).await?;
     Ok(toml::from_str(&conf)?)
 }
 
