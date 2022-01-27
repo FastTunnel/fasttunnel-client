@@ -1,4 +1,5 @@
 token = "TOKEN_FOR_CLIENT_AUTHENTICATION"
+version = "1.0"
 
 [[webs]]
 local_ip = "0.0.0.0"
