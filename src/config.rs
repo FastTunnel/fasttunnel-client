@@ -5,6 +5,7 @@ use tokio::io::AsyncReadExt;
 pub struct Server {
     pub server_addr: String,
     pub server_port: u16,
+    pub timeout: u32,
 }
 
 #[derive(Debug, Deserialize, Eq, PartialEq)]
@@ -34,7 +35,7 @@ pub struct ClientSettings {
 
 impl ClientSettings {
     /// 加载yaml
-    pub async fn load_config(path: &String) -> Result<Self, anyhow::Error> {
+    pub async fn load_config(path: &str) -> Result<Self, anyhow::Error> {
         let mut conf = String::new();
         let mut file = tokio::fs::File::open(path).await?;
         file.read_to_string(&mut conf).await?;
