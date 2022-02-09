@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 use tokio::io::AsyncReadExt;
 
 #[derive(Debug, Deserialize, Eq, PartialEq)]
@@ -8,7 +8,7 @@ pub struct Server {
     pub timeout: u32,
 }
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct Forward {
     pub local_ip: String,
     pub local_port: u16,
@@ -16,7 +16,7 @@ pub struct Forward {
     pub protocol: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct Web {
     pub local_ip: String,
     pub local_port: u16,

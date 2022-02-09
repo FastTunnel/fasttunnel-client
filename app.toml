@@ -8,8 +8,8 @@ sub_domain = "test"
 www = ["www.abc.com", "test111.test.cc"]
 
 [server]
-server_addr = "sh1.k9s.run"
-server_port = 80
+server_addr = "localhost"
+server_port = 1270
 timeout = 5
 
 [[forwards]]

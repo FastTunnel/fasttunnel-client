@@ -1,20 +1,25 @@
 use std::string::String;
 use std::sync::Arc;
-
 use futures_util::{SinkExt, StreamExt};
 use log::info;
 use tokio::sync::{mpsc};
 use tokio_tungstenite::{connect_async_with_config};
 use tokio_tungstenite::tungstenite::handshake::client::{Request};
-use tokio_tungstenite::tungstenite::protocol;
-
-use crate::config::ClientSettings;
+use tokio_tungstenite::tungstenite::{Message, protocol};
+use serde::{Deserialize, Serialize};
+use crate::config::{ClientSettings, Forward, Web};
 
 #[derive(Debug)]
 pub struct Client {
     config: Arc<ClientSettings>,
     stop: tokio::sync::watch::Receiver<()>,
     sock: tokio::sync::mpsc::Sender<String>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct LoginMsg {
+    pub webs: Vec<Web>,
+    pub forwards: Vec<Forward>,
 }
 
 impl Client {
@@ -62,13 +67,14 @@ impl Client {
         let (mut write, mut read) = ws_stream.split();
         info!("WebSocket handshake has been successfully completed");
 
-        // login
-        let message = protocol::Message::text("");
-        write.send(message).await?;
+        {
+            let login_msg = LoginMsg { webs: self.config.webs.clone(), forwards: self.config.forwards.clone() };
+            write.send(Message::from(serde_json::to_string(&login_msg)?)).await?;
+        }
 
         // 获取服务端消息
         for x in read.next().await {
-            todo!("处理服务端控制消息");
+            info!("-----------{}",x?);
         }
         Ok(())
     }
